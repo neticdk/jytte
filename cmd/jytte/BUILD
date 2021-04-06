@@ -22,3 +22,12 @@ container_image(
     files = [":jytte"],
     user = "65534",
 )
+
+container_push(
+    name = "publish",
+    format = "Docker",
+    image = ":docker_image",
+    registry = "ghcr.io",
+    repository = "neticdk/jytte",
+    tag = "$(version)",
+)
