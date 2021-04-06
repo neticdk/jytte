@@ -13,4 +13,4 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         run: |
-          bazel build //...
+          bazel build //cmd/jytte:jytte
