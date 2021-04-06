@@ -22,4 +22,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push container image to GitHub Container Registry
         run: |
-          bazel build --define version=${{ steps.vars.outputs.tag }} //cmd/jytte:publish
+          bazel run --define version=${{ steps.vars.outputs.tag }} //cmd/jytte:publish
