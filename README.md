@@ -29,6 +29,12 @@ Run the application locally simply use `go run` like so:
 go run cmd/jytte/main.go
 ```
 
+or from Bazel:
+
+```bash
+bazel run //cmd/jytte:jytte
+```
+
 Building local container image run:
 
 ```bash
