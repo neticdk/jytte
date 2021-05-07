@@ -8,31 +8,26 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/neticdk/jytte/pkg/echo"
+	"github.com/neticdk/jytte/pkg/entropy"
 	"github.com/neticdk/jytte/pkg/health"
+	"github.com/spf13/viper"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel/exporters/metric/prometheus"
 )
 
 // ListenAndServe instantiates a new server instance
-func ListenAndServe(addr string) {
+func ListenAndServe() {
 	initMetrics()
-	initTracing()
+
+	if viper.GetBool("tracing") {
+		log.Printf("Waiting for tracing connection...")
+		shutdown := initTracing()
+		defer shutdown()
+	}
 
 	http.Handle("/health", health.NewHandler())
 	http.Handle("/echo/", otelhttp.NewHandler(echo.NewHandler(), "echo"))
+	http.Handle("/entropy/", otelhttp.NewHandler(entropy.NewHandler(), ""))
 
-	log.Printf("Start listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
-}
-
-func initMetrics() {
-	exporter, err := prometheus.InstallNewPipeline(prometheus.Config{})
-	if err != nil {
-		log.Panicf("failed to initialize prometheus exporter %v", err)
-	}
-	http.HandleFunc("/metrics", exporter.ServeHTTP)
-}
-
-func initTracing() {
-
+	log.Printf("Start listening on %s", viper.GetString("listen_address"))
+	log.Fatal(http.ListenAndServe(viper.GetString("listen_address"), handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
 }

@@ -7,15 +7,19 @@ import (
 
 	"github.com/neticdk/jytte/pkg/server"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
-	addr    string
+	addr        string
+	tracingAddr string
+	tracing     bool
+
 	rootCmd = &cobra.Command{
 		Use:   "jytte",
 		Short: "jytte is a small http based application written for demo and testing purposes",
 		Run: func(cmd *cobra.Command, args []string) {
-			server.ListenAndServe(addr)
+			server.ListenAndServe()
 		},
 	}
 )
@@ -29,5 +33,14 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&addr, "address", "a", ":8080", "Listen address")
+	viper.SetEnvPrefix("JYTTE")
+	viper.AutomaticEnv()
+	viper.SetDefault("TRACING", true)
+	viper.SetDefault("TRACING_ADDRESS", "localhost:4317")
+	viper.SetDefault("LISTEN_ADDRESS", ":8080")
+
+	rootCmd.Flags().StringVarP(&addr, "listen-address", "l", viper.GetString("LISTEN_ADDRESS"), "Listen address")
+	rootCmd.Flags().BoolVarP(&tracing, "tracing", "t", viper.GetBool("TRACING"), "Enable tracing")
+	rootCmd.Flags().StringVarP(&tracingAddr, "tracing-address", "a", viper.GetString("TRACING_ADDRESS"), "Tracing address")
+	viper.BindPFlags(rootCmd.PersistentFlags())
 }
