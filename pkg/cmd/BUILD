@@ -8,5 +8,6 @@ go_library(
     deps = [
         "//pkg/server:go_default_library",
         "@com_github_spf13_cobra//:go_default_library",
+        "@com_github_spf13_viper//:go_default_library",
     ],
 )

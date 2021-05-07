@@ -16,6 +16,9 @@ The application will listen for requests on three endpoints:
 `/echo/`
   a simple echo server sending any incomming input back to the requestor
 
+`/entropy/`
+  a server emulating having multiple dependencies on other services
+
 Besides this the application exposes the Go [pprof](https://golang.org/pkg/net/http/pprof/) allowing runtime profiling and more. This is served on the default path of `/debug/pprof`.
 
 
