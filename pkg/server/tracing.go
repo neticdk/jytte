@@ -29,8 +29,7 @@ func initTracing() func() {
 	driver := otlpgrpc.NewDriver(
 		otlpgrpc.WithInsecure(),
 		otlpgrpc.WithEndpoint(viper.GetString("tracing_address")),
-		otlpgrpc.WithDialOption(grpc.WithBlock()),
-		// grpc.WithTimeout(5*time.Second)),
+		otlpgrpc.WithDialOption(grpc.WithBlock(), grpc.WithTimeout(5*time.Second)),
 	)
 	exp, err := otlp.NewExporter(ctx, driver)
 	util.HandleErr(err, "failed to create exporter")
