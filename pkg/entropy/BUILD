@@ -9,6 +9,8 @@ go_library(
         "@io_opentelemetry_go_otel//:go_default_library",
         "@io_opentelemetry_go_otel//attribute:go_default_library",
         "@io_opentelemetry_go_otel//codes:go_default_library",
+        "@io_opentelemetry_go_otel_metric//:go_default_library",
+        "@io_opentelemetry_go_otel_metric//global:go_default_library",
         "@io_opentelemetry_go_otel_trace//:go_default_library",
     ],
 )
