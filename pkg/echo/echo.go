@@ -5,16 +5,16 @@ import (
 	"net/http"
 )
 
-// EchoServer is a handler implementation echoing back to the requestor
-type EchoServer struct {
+// Server is a handler implementation echoing back to the requestor
+type Server struct {
 }
 
 // NewHandler creates new echo server instance
 func NewHandler() http.Handler {
-	return &EchoServer{}
+	return &Server{}
 }
 
 // ServeHTTP request
-func (s *EchoServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	req.Write(w)
 }

@@ -8,31 +8,28 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/neticdk/jytte/pkg/echo"
+	"github.com/neticdk/jytte/pkg/entropy"
 	"github.com/neticdk/jytte/pkg/health"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel/exporters/metric/prometheus"
 )
 
+// ServiceName is used to annotate traces and metrics
+const ServiceName string = "jytte"
+
 // ListenAndServe instantiates a new server instance
-func ListenAndServe(addr string) {
+func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) {
+	if tracingEnabled {
+		log.Printf("Waiting for tracing connection...")
+		shutdown := initTracing(tracingAddr)
+		defer shutdown()
+	}
+
 	initMetrics()
-	initTracing()
 
 	http.Handle("/health", health.NewHandler())
 	http.Handle("/echo/", otelhttp.NewHandler(echo.NewHandler(), "echo"))
+	http.Handle("/entropy/", otelhttp.NewHandler(entropy.NewHandler(), ""))
 
-	log.Printf("Start listening on %s", addr)
-	log.Fatal(http.ListenAndServe(addr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
-}
-
-func initMetrics() {
-	exporter, err := prometheus.InstallNewPipeline(prometheus.Config{})
-	if err != nil {
-		log.Panicf("failed to initialize prometheus exporter %v", err)
-	}
-	http.HandleFunc("/metrics", exporter.ServeHTTP)
-}
-
-func initTracing() {
-
+	log.Printf("Start listening on %s", listenAddr)
+	log.Fatal(http.ListenAndServe(listenAddr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
 }

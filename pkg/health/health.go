@@ -3,15 +3,16 @@ package health
 
 import "net/http"
 
-type HealthServer struct{}
+// Server is a handler implementation
+type Server struct{}
 
 // NewHandler creates new health server instance
 func NewHandler() http.Handler {
-	return &HealthServer{}
+	return &Server{}
 }
 
 // ServeHTTP request
-func (s *HealthServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
