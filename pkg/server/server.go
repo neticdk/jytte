@@ -15,13 +15,13 @@ import (
 
 // ListenAndServe instantiates a new server instance
 func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) {
-	initMetrics()
-
 	if tracingEnabled {
 		log.Printf("Waiting for tracing connection...")
 		shutdown := initTracing(tracingAddr)
 		defer shutdown()
 	}
+
+	initMetrics()
 
 	http.Handle("/health", health.NewHandler())
 	http.Handle("/echo/", otelhttp.NewHandler(echo.NewHandler(), "echo"))

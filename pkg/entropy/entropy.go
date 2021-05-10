@@ -10,6 +10,8 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -32,18 +34,21 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	rand.Seed(time.Now().UnixNano())
 
-	ctx := req.Context()
 	ctx, span := tracer.Start(
-		ctx,
+		req.Context(),
 		"Call-Backend-Mock-Services",
 		trace.WithAttributes(commonLabels...))
-
-	var (
-		responseText         string
-		backendServiceFailed bool
-	)
-
 	defer span.End()
+
+	meter := global.GetMeterProvider().Meter("entropy")
+	errorUpDownCounter := metric.Must(meter).NewInt64UpDownCounter("entropy.backend.errors")
+	latencyValueRecorder := metric.Must(meter).NewInt64ValueRecorder("entropy.backend.latency")
+
+	// holds the output sent back to the HTTP client
+	var responseText string
+	// set to true if any of the mocked backend services fail - used to make the whole request fail
+	var backendServiceFailed bool
+
 	for i := 1; i < 11; i++ {
 		target := fmt.Sprintf("/service-%d", i)
 		_, iSpan := tracer.Start(
@@ -59,6 +64,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			attribute.String("http.target", target),
 		}
 
+		metricLabels := []attribute.KeyValue{
+			attribute.String("target", target),
+		}
+
 		// Generate a status code
 		statusCode := rand.Intn(10) + 1
 
@@ -72,6 +81,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			statusText = "failed"
 			spanStatusCode = codes.Error
 			backendServiceFailed = true
+			errorUpDownCounter.Add(ctx, 1, metricLabels...)
 		}
 
 		iSpan.SetStatus(spanStatusCode, statusText)
@@ -82,7 +92,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 		iSpan.SetAttributes(backendLabels...)
 
-		<-time.After(time.Duration(rand.Intn(500-10)+10) * time.Millisecond)
+		latency := rand.Intn(500-10) + 10
+		<-time.After(time.Duration(latency) * time.Millisecond)
+		latencyValueRecorder.Record(ctx, int64(latency), metricLabels...)
 		iSpan.End()
 	}
 
