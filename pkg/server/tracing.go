@@ -42,7 +42,7 @@ func initTracing(tracingAddr string) func() {
 
 	bsp := sdktrace.NewBatchSpanProcessor(exp)
 	tracerProvider := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithSampler(sdktrace.AlwaysSample()), // sample every trace - scales with load (be careful when using in production)
 		sdktrace.WithResource(res),
 		sdktrace.WithSpanProcessor(bsp),
 	)
