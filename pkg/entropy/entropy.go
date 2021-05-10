@@ -49,7 +49,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		_, iSpan := tracer.Start(
 			ctx,
 			target,
-			trace.WithSpanKind(trace.SpanKindServer))
+			trace.WithSpanKind(trace.SpanKindClient))
 
 		backendLabels := []attribute.KeyValue{
 			attribute.String("http.flavor", "1.1"),
