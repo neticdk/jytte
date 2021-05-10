@@ -3,9 +3,6 @@ package echo
 
 import (
 	"net/http"
-
-	"go.opentelemetry.io/otel/attribute"
-	apiTrace "go.opentelemetry.io/otel/trace"
 )
 
 // Server is a handler implementation echoing back to the requestor
@@ -19,8 +16,5 @@ func NewHandler() http.Handler {
 
 // ServeHTTP request
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	span := apiTrace.SpanFromContext(ctx)
-	span.SetAttributes(attribute.String("foo", "bar"))
 	req.Write(w)
 }
