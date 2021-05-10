@@ -15,7 +15,7 @@ import (
 func initMetrics() {
 	res, err := resource.New(context.Background(),
 		resource.WithAttributes(
-			semconv.ServiceNameKey.String("jytte"),
+			semconv.ServiceNameKey.String(ServiceName),
 		),
 	)
 	util.HandleErr(err, "failed to create resource")

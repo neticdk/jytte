@@ -13,6 +13,9 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
+// ServiceName is used to annotate traces and metrics
+const ServiceName string = "jytte"
+
 // ListenAndServe instantiates a new server instance
 func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) {
 	if tracingEnabled {

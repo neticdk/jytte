@@ -35,7 +35,7 @@ func initTracing(tracingAddr string) func() {
 
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
-			semconv.ServiceNameKey.String("jytte"),
+			semconv.ServiceNameKey.String(ServiceName),
 		),
 	)
 	util.HandleErr(err, "failed to create resource")

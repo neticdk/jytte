@@ -46,7 +46,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	// holds the output sent back to the HTTP client
 	var responseText string
-	// set to true if any of the mocked backend services fail - used to make the whole request fail
+	// set to true if any of the mocked backend services fail - used to make
+	// the whole request fail
 	var backendServiceFailed bool
 
 	for i := 1; i < 11; i++ {
@@ -68,7 +69,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			attribute.String("target", target),
 		}
 
-		// Generate a status code
+		// Generate a status code representing the return code of the
+		// mocked backend service
 		statusCode := rand.Intn(10) + 1
 
 		statusText := "success"
