@@ -47,7 +47,7 @@ bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //cmd/jytte:d
 Update Bazel dependencies generated from `go.mod`:
 
 ```bash
-bazel run //:gazelle -- update-repos -from_file=go.mod -to_macro=deps.bzl%go_dependencies -build_file_proto_mode=disable_global
+bazel run //:gazelle -- update-repos -from_file=go.mod -to_macro=deps.bzl%go_dependencies
 ```
 
 Update the Bazel build files:
