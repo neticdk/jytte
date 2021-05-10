@@ -11,15 +11,15 @@ import (
 )
 
 var (
-	addr        string
-	tracingAddr string
-	tracing     bool
+	listenAddr     string
+	tracingAddr    string
+	tracingEnabled bool
 
 	rootCmd = &cobra.Command{
 		Use:   "jytte",
 		Short: "jytte is a small http based application written for demo and testing purposes",
 		Run: func(cmd *cobra.Command, args []string) {
-			server.ListenAndServe()
+			server.ListenAndServe(listenAddr, tracingEnabled, tracingAddr)
 		},
 	}
 )
@@ -39,8 +39,8 @@ func init() {
 	viper.SetDefault("TRACING_ADDRESS", "localhost:4317")
 	viper.SetDefault("LISTEN_ADDRESS", ":8080")
 
-	rootCmd.Flags().StringVarP(&addr, "listen-address", "l", viper.GetString("LISTEN_ADDRESS"), "Listen address")
-	rootCmd.Flags().BoolVarP(&tracing, "tracing", "t", viper.GetBool("TRACING"), "Enable tracing")
+	rootCmd.Flags().StringVarP(&listenAddr, "listen-address", "l", viper.GetString("LISTEN_ADDRESS"), "Listen address")
+	rootCmd.Flags().BoolVarP(&tracingEnabled, "tracing", "t", viper.GetBool("TRACING"), "Enable tracing")
 	rootCmd.Flags().StringVarP(&tracingAddr, "tracing-address", "a", viper.GetString("TRACING_ADDRESS"), "Tracing address")
 	viper.BindPFlags(rootCmd.PersistentFlags())
 }

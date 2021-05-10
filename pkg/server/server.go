@@ -10,17 +10,16 @@ import (
 	"github.com/neticdk/jytte/pkg/echo"
 	"github.com/neticdk/jytte/pkg/entropy"
 	"github.com/neticdk/jytte/pkg/health"
-	"github.com/spf13/viper"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 // ListenAndServe instantiates a new server instance
-func ListenAndServe() {
+func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) {
 	initMetrics()
 
-	if viper.GetBool("tracing") {
+	if tracingEnabled {
 		log.Printf("Waiting for tracing connection...")
-		shutdown := initTracing()
+		shutdown := initTracing(tracingAddr)
 		defer shutdown()
 	}
 
@@ -28,6 +27,6 @@ func ListenAndServe() {
 	http.Handle("/echo/", otelhttp.NewHandler(echo.NewHandler(), "echo"))
 	http.Handle("/entropy/", otelhttp.NewHandler(entropy.NewHandler(), ""))
 
-	log.Printf("Start listening on %s", viper.GetString("listen_address"))
-	log.Fatal(http.ListenAndServe(viper.GetString("listen_address"), handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
+	log.Printf("Start listening on %s", listenAddr)
+	log.Fatal(http.ListenAndServe(listenAddr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
 }

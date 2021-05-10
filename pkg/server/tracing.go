@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/neticdk/jytte/pkg/util"
-	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpgrpc"
@@ -21,14 +20,14 @@ import (
 	"google.golang.org/grpc"
 )
 
-func initTracing() func() {
-	log.Printf("Sending traces to %s", viper.GetString("tracing_address"))
+func initTracing(tracingAddr string) func() {
+	log.Printf("Sending traces to %s", tracingAddr)
 
 	ctx := context.Background()
 
 	driver := otlpgrpc.NewDriver(
 		otlpgrpc.WithInsecure(),
-		otlpgrpc.WithEndpoint(viper.GetString("tracing_address")),
+		otlpgrpc.WithEndpoint(tracingAddr),
 		otlpgrpc.WithDialOption(grpc.WithBlock(), grpc.WithTimeout(5*time.Second)),
 	)
 	exp, err := otlp.NewExporter(ctx, driver)
