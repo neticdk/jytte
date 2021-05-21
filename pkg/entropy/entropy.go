@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -38,6 +39,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		req.Context(),
 		"Call-Backend-Mock-Services",
 		trace.WithAttributes(commonLabels...))
+	log.Info().Str("TraceID", span.SpanContext().TraceID().String()).Msg("Entropy starting fan out")
 	defer span.End()
 
 	meter := global.GetMeterProvider().Meter("entropy")

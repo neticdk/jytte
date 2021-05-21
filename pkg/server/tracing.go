@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/neticdk/jytte/pkg/util"
+	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpgrpc"
@@ -21,7 +21,7 @@ import (
 )
 
 func initTracing(tracingAddr string) func() {
-	log.Printf("Sending traces to %s", tracingAddr)
+	log.Info().Str("tracingAddr", tracingAddr).Msg("Initialize tracing")
 
 	ctx := context.Background()
 

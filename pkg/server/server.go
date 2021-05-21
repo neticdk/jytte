@@ -2,7 +2,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/neticdk/jytte/pkg/echo"
 	"github.com/neticdk/jytte/pkg/entropy"
 	"github.com/neticdk/jytte/pkg/health"
+	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -19,7 +19,7 @@ const ServiceName string = "jytte"
 // ListenAndServe instantiates a new server instance
 func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) {
 	if tracingEnabled {
-		log.Printf("Waiting for tracing connection...")
+		log.Info().Msg("Waiting for tracing connection to start up...")
 		shutdown := initTracing(tracingAddr)
 		defer shutdown()
 	}
@@ -30,6 +30,6 @@ func ListenAndServe(listenAddr string, tracingEnabled bool, tracingAddr string) 
 	http.Handle("/echo/", otelhttp.NewHandler(echo.NewHandler(), "echo"))
 	http.Handle("/entropy/", otelhttp.NewHandler(entropy.NewHandler(), ""))
 
-	log.Printf("Start listening on %s", listenAddr)
-	log.Fatal(http.ListenAndServe(listenAddr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux)))
+	log.Info().Str("listenAddr", listenAddr).Msg("Start listening")
+	log.Fatal().Err(http.ListenAndServe(listenAddr, handlers.LoggingHandler(os.Stdout, http.DefaultServeMux))).Msg("Server failed")
 }
