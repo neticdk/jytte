@@ -15,6 +15,7 @@ go_library(
         "//pkg/health:go_default_library",
         "//pkg/util:go_default_library",
         "@com_github_gorilla_handlers//:go_default_library",
+        "@com_github_rs_zerolog//log:go_default_library",
         "@io_opentelemetry_go_contrib_instrumentation_net_http_otelhttp//:go_default_library",
         "@io_opentelemetry_go_otel//:go_default_library",
         "@io_opentelemetry_go_otel//propagation:go_default_library",

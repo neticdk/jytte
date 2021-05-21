@@ -5,4 +5,5 @@ go_library(
     srcs = ["util.go"],
     importpath = "github.com/neticdk/jytte/pkg/util",
     visibility = ["//visibility:public"],
+    deps = ["@com_github_rs_zerolog//log:go_default_library"],
 )

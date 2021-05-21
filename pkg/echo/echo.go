@@ -3,6 +3,10 @@ package echo
 
 import (
 	"net/http"
+
+	"github.com/rs/zerolog/log"
+
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Server is a handler implementation echoing back to the requestor
@@ -16,5 +20,8 @@ func NewHandler() http.Handler {
 
 // ServeHTTP request
 func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	span := trace.SpanFromContext(req.Context())
+	log.Info().Str("TraceID", span.SpanContext().TraceID().String()).Msg("Echo service")
+
 	req.Write(w)
 }
